@@ -11,7 +11,8 @@ c.fillText("_rishabh@412", 0, vh);
 canvas.width = vw;
 canvas.height = vh;
 let isFullScreen=false
-
+let run=true
+let layerThickness=8
 function createDrop() {
   moveDrop(
     Math.floor(Math.random() * 360),
@@ -35,9 +36,10 @@ function moveDrop(r, g, b, x, y) {
   if (y > vh-filledScreen) {
     createDrop();
     splitDrop(r, g, b, x);
-    filledScreen+=6
+    filledScreen+=layerThickness
     colorFilledScreen()
   } else {
+    if(run)
     requestAnimationFrame(() => moveDrop(r, g, b, x, y + 10));
   }
 }
@@ -49,19 +51,20 @@ function splitDrop(r, g, b, x) {
 }
 
 function moveSplittedDrop(r, g, b, x, y, vx, vy) {
-  c.fillStyle = `hsl(${r},100%,50%)`;
+  c.fillStyle = `hsl(${r},100%,50%)`;``
   c.fillRect(x, y, 5, 5);
   c.fill();
   x += vx + vx;
   y += vy;
 
+  if ((x < 0 || x >= vw || y < 0 || y >= vh-filledScreen-10)&& vy>0) return
   if (vh-filledScreen < 0) vy += 0.01;
   else  vy += 0.06;
 
-  if (x < 0 || x > vw || y < 0 || y > vh-filledScreen-10) return
-
   if(filledScreen>vh-50)  filledScreen=0
+
   
+  if(run)
   requestAnimationFrame(() => moveSplittedDrop(r, g, b, x, y, vx, vy));
 }
 function colorFilledScreen(){
@@ -79,13 +82,13 @@ function exitFullScreen() {
 }
 
 window.addEventListener("resize",()=>{
-  vh = window.innerHeight;
-  vw = window.innerWidth;
-  canvas.width = vw;
-  canvas.height = vh;
-  colorFilledScreen()
+  if(run){
+    vh = window.innerHeight;
+    vw = window.innerWidth;
+    canvas.width = vw;
+    canvas.height = vh;
+    colorFilledScreen()
+  }
 })
-
-
 
 // console.log("ctx.arc(x,y 5,0,2*Math.PI);rishabh");
