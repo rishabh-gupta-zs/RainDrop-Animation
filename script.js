@@ -1,12 +1,16 @@
 const canvas = document.getElementById("canvas");
-const vh = window.innerHeight;
-const vw = window.innerWidth;
+let vh = window.innerHeight;
+let vw = window.innerWidth;
 canvas.width = vw;
 canvas.height = vh;
 const c = canvas.getContext("2d");
+let filledScreen=0
 c.font = "20px Monospace";
 c.fillStyle = "#fff";
 c.fillText("_rishabh@412", 0, vh);
+canvas.width = vw;
+canvas.height = vh;
+let isFullScreen=false
 
 function createDrop() {
   moveDrop(
@@ -18,39 +22,70 @@ function createDrop() {
   );
 }
 createDrop();
+
 function moveDrop(r, g, b, x, y) {
   c.fillStyle = `hsl(${r},100%,50%)`;
   c.fillRect(x, y, 10, 10);
   c.fill();
   c.fillStyle = "#0001";
-  c.fillRect(0, 0, vw, vh);
+  c.fillRect(0, 0, vw, vh-filledScreen);
   c.font = "20px Monospace";
   c.fillStyle = "#ffffff06";
   c.fillText("rishabh.gupta", vw - 160, 20);
-  if (y > vh) {
+  if (y > vh-filledScreen) {
     createDrop();
     splitDrop(r, g, b, x);
+    filledScreen+=6
+    colorFilledScreen()
   } else {
     requestAnimationFrame(() => moveDrop(r, g, b, x, y + 10));
   }
 }
 
 function splitDrop(r, g, b, x) {
-  for (i = 0; i < 20; i++)
-    arcPathMove(r, g, b, x, vh-10, 0.5-Math.random()*1.5, -Math.random()*3);
+  for (i = 0; i < 20; i++){
+    moveSplittedDrop(r, g, b, x, vh-filledScreen - 10, 0.5 - Math.random() * 1.5, -Math.random() * 3);
+  }
 }
 
-function arcPathMove(r, g, b, x, y, vx, vy) {
+function moveSplittedDrop(r, g, b, x, y, vx, vy) {
   c.fillStyle = `hsl(${r},100%,50%)`;
   c.fillRect(x, y, 5, 5);
   c.fill();
   x += vx + vx;
   y += vy;
-  if (vh < 0) vy += 0.01;
-  else {
-    vy += 0.06;
-  }
-  if ((x > 0 && x < 600) || (y > 0 && y < 400))
-    requestAnimationFrame(() => arcPathMove(r, g, b, x, y, vx, vy));
+
+  if (vh-filledScreen < 0) vy += 0.01;
+  else  vy += 0.06;
+
+  if (x < 0 || x > vw || y < 0 || y > vh-filledScreen-10) return
+
+  if(filledScreen>vh-50)  filledScreen=0
+  
+  requestAnimationFrame(() => moveSplittedDrop(r, g, b, x, y, vx, vy));
 }
-console.log("ctx.arc(x,y 5,0,2*Math.PI);rishabh");
+function colorFilledScreen(){
+  c.fillStyle = "rgb(0,181,181)";
+  c.fillRect(0, vh-filledScreen, vw, filledScreen);
+}
+
+function fullScreen() {
+  isFullScreen=true
+  document.documentElement.requestFullscreen()
+}
+function exitFullScreen() {
+  if(isFullScreen)
+  document.exitFullscreen();
+}
+
+window.addEventListener("resize",()=>{
+  vh = window.innerHeight;
+  vw = window.innerWidth;
+  canvas.width = vw;
+  canvas.height = vh;
+  colorFilledScreen()
+})
+
+
+
+// console.log("ctx.arc(x,y 5,0,2*Math.PI);rishabh");
