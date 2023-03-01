@@ -18,7 +18,7 @@ function createDrop() {
     Math.floor(Math.random() * 360),
     Math.floor(Math.random() * 255),
     Math.floor(Math.random() * 255),
-    Math.floor(Math.random() * 600),
+    Math.floor(Math.random() * vw),
     0
   );
 }
